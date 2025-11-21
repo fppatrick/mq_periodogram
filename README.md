@@ -1,6 +1,6 @@
 # Robust M-quantile periodogram (`mqper`)
 
-An R function for computing robust spectral estimates of time series data using M-quantile regression.
+An R function for estimate the so-called M-quantile spectrum of a univariate time series using M-quantile regression.
 
 ---
 
@@ -9,7 +9,6 @@ The `mqper` function calculates a robust periodogram using M-quantile regression
 
 Key features:
 - Robust spectral estimation via M-quantile regression
-- Handles both even and odd-length time series
 - Returns spectral estimates and corresponding frequencies
 - Works with any quantile level (0 < tau < 1)
 
