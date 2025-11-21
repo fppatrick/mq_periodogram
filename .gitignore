@@ -185,7 +185,7 @@ cython_debug/
 nonbitbucket
 
 # R files
-Testes.R
+testes.R
 itens_fipe_run.R
 id_veic.R
 LICENSE
