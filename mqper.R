@@ -1,9 +1,9 @@
 #' Robust M-Quantile Periodogram
 #'
-#' Computes the univariate robust M-quantile periodogram using
-#' M-quantile regression as introduced in Breckling & Chambers (1988).
-#' This estimator provides robustness to outliers and heavy-tailed noise by
-#' modelling the harmonic regressions through M-quantile regression.
+#' Computes the robust M-quantile periodogram from univariate time series using
+#' the M-quantile regression as introduced in Breckling & Chambers (1988).
+#' This estimator provides robustness to outliers and heavy-tailed noise. Furthermore,
+#' it offer a more rich view of the spectrum than the classical approach.
 #'
 #' @details
 #' For each Fourier frequency \eqn{\lambda_j = 2 \pi j / n}, the function fits
@@ -11,7 +11,7 @@
 #' \deqn{ X_t = \beta_{1,j}(\tau) \cos(\lambda_j t) +
 #'        \beta_{2,j}(\tau) \sin(\lambda_j t) + \varepsilon_t, }
 #'
-#' using the `mqlm` estimator (`MASS::mqlm`).
+#' using the `mqlm` estimator (\url{https://github.com/fppatrick/mq_regression}).
 #'  
 #' The robust M-quantile periodogram is then defined as
 #' \deqn{
@@ -29,7 +29,7 @@
 #'
 #' @author Patrick Ferreira Patrocinio
 #'
-#' @import MASS
+#' @import mquantile.R
 #' @export
 
 mqper <- function(timeseries, tau) {
@@ -58,13 +58,13 @@ mqper <- function(timeseries, tau) {
     if (j == n / 2 && n %% 2 == 0) {
       MX <- cbind(X1)
       fit <- mqlm(MX, timeseries, maxit = 100, q = tau, k = 1.345)
-      FFT[j] <- sqrt(n / 4) * complex(real = fit$coef[1], imaginary = 0)
+      FFT[j] <- sqrt(n / 4) * complex(real = fit$coef[2], imaginary = 0)
     } else {
       X2 <- sin(w * t_index)
       MX <- cbind(X1, X2)
       fit <- mqlm(MX, timeseries, maxit = 100, q = tau, k = 1.345)
-      FFT[j] <- sqrt(n / 4) * complex(real = fit$coef[1],
-                                      imaginary = -fit$coef[2])
+      FFT[j] <- sqrt(n / 4) * complex(real = fit$coef[2],
+                                      imaginary = -fit$coef[3])
     }
 
     perior[j] <- Mod(FFT[j])^2
@@ -73,8 +73,9 @@ mqper <- function(timeseries, tau) {
   freq <- 2 * pi * seq_len(g) / n
 
   if (n %% 2 == 0) {
-    return(list(perior = perior[-g], freq = freq[-g]))
-  } else {
     return(list(perior = perior, freq = freq))
+  } else {
+    return(list(perior = perior[-g], freq = freq[-g]))
+    
   }
 }
